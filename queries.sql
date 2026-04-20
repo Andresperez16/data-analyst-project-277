@@ -31,18 +31,16 @@ having AVG(s.quantity * p.price) < (
 ) 
 order by average_income asc;
 
---Esta consulta muetra el ingreso total por vendedor y día
--- ordenado cronológicamente y por nombre 
-
-select 
-   CONCAT(e.first_name, ' ', e.last_name) AS seller,
-   TRIM(LOWER(TO_CHAR(s.sale_date, 'Day'))) as day_of_week,
-   floor(SUM(s.quantity * p.price)) as income
-from employees e 
-join sales s on e.employee_id = s.sales_person_id 
-join products p on s.product_id = p.product_id 
-group by seller, day_of_week, extract(DOW from s.sale_date)
-order by extract(DOW from s.sale_date) asc, seller asc;
+-- Ingreso total por vendedor y día (Orden cronológico Lunes-Domingo)
+SELECT 
+    CONCAT(e.first_name, ' ', e.last_name) AS seller,
+    TRIM(LOWER(TO_CHAR(s.sale_date, 'Day'))) AS day_of_week,
+    SUM(s.quantity * p.price) AS income
+FROM employees e 
+JOIN sales s ON e.employee_id = s.sales_person_id 
+JOIN products p ON s.product_id = p.product_id 
+GROUP BY seller, day_of_week, EXTRACT(ISODOW FROM s.sale_date)
+ORDER BY EXTRACT(ISODOW FROM s.sale_date) ASC, seller ASC;
 
 --Esta consulta muestra los clientes por rango de eddad
 --y cuenta el total por grupo 
