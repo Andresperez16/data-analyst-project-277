@@ -66,3 +66,26 @@ from sales s
 join products p on s.product_id = p.product_id 
 group by selling_month 
 order by selling_month asc;
+
+--clientes cuya primera compra fue 
+--durante una promoción
+WITH first_purchases AS (
+    SELECT 
+        c.customer_id,
+        CONCAT(c.first_name, ' ', c.last_name) AS customer,
+        s.sale_date,
+        CONCAT(e.first_name, ' ', e.last_name) AS seller,
+        p.price,
+        ROW_NUMBER() OVER (PARTITION BY s.customer_id ORDER BY s.sale_date ASC) as purchase_order
+    FROM sales s
+    JOIN customers c ON s.customer_id = c.customer_id
+    JOIN employees e ON s.sales_person_id = e.employee_id
+    JOIN products p ON s.product_id = p.product_id
+)
+SELECT 
+    customer,
+    sale_date,
+    seller
+FROM first_purchases
+WHERE purchase_order = 1 AND price = 0
+ORDER BY customer;
