@@ -43,3 +43,16 @@ join sales s on e.employee_id = s.sales_person_id
 join products p on s.product_id = p.product_id 
 group by seller, day_of_week, extract(DOW from s.sale_date)
 order by extract(DOW from s.sale_date) asc, seller asc;
+
+--Esta consulta muestra los clientes por rango de eddad
+--y cuenta el total por grupo 
+select
+   case 
+	  when age between 16 and 25 then '16-25' 
+	  when age between 26 and 40 then '26-40'
+	  else '40+'
+   end as age_category,
+   COUNT(*) as age_count 
+ from customers 
+ group by age_category 
+ order by age_category; 
