@@ -18,7 +18,9 @@ LIMIT 10;
 SELECT
     CONCAT(e.first_name, ' ', e.last_name) AS seller,
     FLOOR(
-        AVG(s.quantity * p.price)
+        AVG(
+            s.quantity * p.price
+        )
     ) AS average_income
 FROM employees AS e
 INNER JOIN sales AS s ON e.employee_id = s.sales_person_id
