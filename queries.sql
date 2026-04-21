@@ -1,6 +1,5 @@
 -- Esta consulta cuenta el número total de clientes en la tabla customers
-SELECT
-    COUNT(*) AS customers_count
+SELECT COUNT(*) AS customers_count
 FROM customers;
 
 -- Esta consulta obtiene los 10 vendedores con mayores ingresos totales
@@ -31,8 +30,7 @@ HAVING AVG(s.quantity * p.price) < (
             s2.quantity * p2.price
         )
     FROM sales AS s2
-    INNER JOIN products AS p
-        ON s2.product_id = p2.product_id
+    INNER JOIN products AS p2 ON s2.product_id = p2.product_id
 )
 ORDER BY average_income ASC;
 
@@ -94,8 +92,9 @@ FROM (
     INNER JOIN employees AS e ON s.sales_person_id = e.employee_id
     INNER JOIN products AS p ON s.product_id = p.product_id
 ) AS sub
-WHERE sub.purchase_order = 1
-  AND sub.price = 0
+WHERE
+    sub.purchase_order = 1
+    AND sub.price = 0
 ORDER BY sub.customer;
 
 -- Obtiene los 10 productos más vendidos sumando sus cantidades
