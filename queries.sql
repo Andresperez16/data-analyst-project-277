@@ -95,7 +95,7 @@ FROM first_purchases
 WHERE purchase_order = 1 AND price = 0
 ORDER BY customer;
 
--- Top 10 productos populares
+-- Obtiene los 10 productos más vendidos sumando sus cantidades
 SELECT 
     product_id AS "ProductID", 
     SUM(quantity) AS "TotalQuantity"
@@ -104,13 +104,12 @@ GROUP BY product_id
 ORDER BY "TotalQuantity" DESC
 LIMIT 10;
 
--- Top 10 productos rentables
+-- Calcula los 10 productos con mayor recaudación total (cantidad * precio)
 SELECT 
     s.product_id AS "ProductID", 
-    FLOOR(SUM(s.quantity * p.price)) AS "Amount"
+    CAST(SUM(s.quantity * p.price) AS BIGINT) AS "Amount"
 FROM sales s
 JOIN products p ON s.product_id = p.product_id
 GROUP BY s.product_id
 ORDER BY "Amount" DESC
 LIMIT 10;
-
