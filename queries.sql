@@ -1,5 +1,6 @@
 -- Esta consulta cuenta el número total de clientes en la tabla customers
-SELECT COUNT(*) AS customers_count
+SELECT
+    COUNT(*) AS customers_count
 FROM customers;
 
 -- Esta consulta obtiene los 10 vendedores con mayores ingresos totales
@@ -17,16 +18,21 @@ LIMIT 10;
 -- Esta consulta identifica a los vendedores cuyo promedio es inferior al global
 SELECT
     CONCAT(e.first_name, ' ', e.last_name) AS seller,
-    FLOOR(AVG(s.quantity * p.price)) AS average_income
+    FLOOR(
+        AVG(s.quantity * p.price)
+    ) AS average_income
 FROM employees AS e
 INNER JOIN sales AS s ON e.employee_id = s.sales_person_id
 INNER JOIN products AS p ON s.product_id = p.product_id
 GROUP BY seller
 HAVING AVG(s.quantity * p.price) < (
     SELECT
-        AVG(s2.quantity * p2.price)
+        AVG(
+            s2.quantity * p2.price
+        )
     FROM sales AS s2
-    INNER JOIN products AS p2 ON s2.product_id = p2.product_id
+    INNER JOIN products AS p
+        ON s2.product_id = p2.product_id
 )
 ORDER BY average_income ASC;
 
@@ -40,8 +46,8 @@ INNER JOIN sales AS s ON e.employee_id = s.sales_person_id
 INNER JOIN products AS p ON s.product_id = p.product_id
 GROUP BY
     EXTRACT(ISODOW FROM s.sale_date),
-    day_of_week,
-    seller
+    TRIM(LOWER(TO_CHAR(s.sale_date, 'Day'))),
+    CONCAT(e.first_name, ' ', e.last_name)
 ORDER BY
     EXTRACT(ISODOW FROM s.sale_date) ASC,
     seller ASC;
@@ -61,7 +67,7 @@ ORDER BY age_category;
 -- Agrupa las ventas por año-mes y suma los ingresos
 SELECT
     TO_CHAR(s.sale_date, 'YYYY-MM') AS selling_month,
-    COUNT(DISTINCT s.customer_id) AS total_cuatomers,
+    COUNT(DISTINCT s.customer_id) AS total_customers,
     FLOOR(SUM(s.quantity * p.price)) AS income
 FROM sales AS s
 INNER JOIN products AS p ON s.product_id = p.product_id
@@ -88,7 +94,8 @@ FROM (
     INNER JOIN employees AS e ON s.sales_person_id = e.employee_id
     INNER JOIN products AS p ON s.product_id = p.product_id
 ) AS sub
-WHERE sub.purchase_order = 1 AND sub.price = 0
+WHERE sub.purchase_order = 1
+  AND sub.price = 0
 ORDER BY sub.customer;
 
 -- Obtiene los 10 productos más vendidos sumando sus cantidades
